@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Price Prediction</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
+    }
+    .btn-custom {
+      background-color: #667eea; 
+      color: white;
+      font-weight: bold;
+    }
+    .btn-custom:hover {
+      background-color: #5a67d8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card p-4">
+          <h2 class="text-center mb-4">🚗 Car Price Prediction</h2>
+          <form action="/predict" method="POST" target="_blank">
+
+            <div class="mb-3">
+          <!-- Brand Dropdown -->
+                  <label for="brand">Brand:</label>
+<select id="brand" name="brand" onchange="updateModels()" required>
+
+  <option value="">--Select Brand--</option>
+  <option value="Maruti Suzuki">Maruti Suzuki</option>
+  <option value="Hyundai">Hyundai</option>
+  <option value="Mahindra">Mahindra</option>
+  <option value="Ford">Ford</option>
+  <option value="Skoda">Skoda</option>
+  <option value="Audi">Audi</option>
+  <option value="Toyota">Toyota</option>
+  <option value="Renault">Renault</option>
+  <option value="Honda">Honda</option>
+  <option value="Datsun">Datsun</option>
+  <option value="Mitsubishi">Mitsubishi</option>
+  <option value="Tata">Tata</option>
+  <option value="Volkswagen">Volkswagen</option>
+  <option value="Chevrolet">Chevrolet</option>
+  <option value="Mini">Mini</option>
+  <option value="BMW">BMW</option>
+  <option value="Nissan">Nissan</option>
+  <option value="Fiat">Fiat</option>
+  <option value="Mercedes Benz">Mercedes Benz</option>
+  <option value="Land Rover">Land Rover</option>
+  <option value="Jaguar">Jaguar</option>
+  <option value="Volvo">Volvo</option>
+  <option value="Jeep">Jeep</option>
+</select>
+
+<br><br>
+
+<!-- Model Dropdown -->
+<label for="model">Model:</label>
+<select id="model" name="model" required>
+
+  <option value="">--Select Model--</option>
+</select>
+
+<script>
+  // Brand → Models mapping (from PDF: Company + Name only)
+  const carModels = {
+    "Maruti Suzuki": [
+      "Alto 800 Vxi",
+      "Alto K10 VXi AMT",
+      "Stingray VXi",
+      "Alto K10 VXi",
+      "Swift Dzire VXi",
+      "Wagon R VXi",
+      "Swift VDi",
+      "Wagon R LXI BS IV",
+      "Zen Estilo VXI",
+      "Celerio VDi",
+      "SX4 Celebration Diesel",
+      "Omni Limited Edition",
+      "Baleno Delta",
+      "Ertiga Vxi",
+      "Ciaz ZXi Plus",
+      "Vitara Brezza ZDi",
+      "Ritz VXi",
+      "S Cross Sigma 1.3"
+    ],
+    "Hyundai": [
+      "Santro Xing XO eRLX Euro III",
+      "Grand i10 Magna 1.2 Kappa VTVT",
+      "Eon",
+      "Elite i20 Magna 1.2",
+      "i20 Sportz 1.2",
+      "Verna Fluidic New",
+      "i10 Magna 1.2",
+      "Creta 1.6 SX Plus Petrol",
+      "Xcent Base 1.1 CRDi",
+      "Elantra SX",
+      "Sonata Transform 2.4 GDi MT",
+      "Accent GLX",
+      "Venue",
+      "Getz Prime 1.3 GLX"
+    ],
+    "Mahindra": [
+      "Jeep CL550 MDI",
+      "Scorpio SLE BS IV",
+      "Scorpio S10",
+      "XUV500 W8",
+      "Bolero DI",
+      "Quanto C8",
+      "Thar CRDe 4x4 AC",
+      "Xylo E4",
+      "TUV300 T4 Plus",
+      "KUV100 K8 D 6 STR"
+    ],
+    "Ford": [
+      "EcoSport Titanium 1.5L TDCi",
+      "Figo",
+      "EcoSport Ambiente 1.5L TDCi",
+      "EcoSport Trend 1.5 TiVCT",
+      "Fiesta SXi 1.6 ABS",
+      "Endeavour 4x4 Thunder Plus",
+      "Fusion 1.4 TDCi Diesel",
+      "Ikon 1.3 CLXi NXt Finesse"
+    ],
+    "Skoda": [
+      "Fabia Classic 1.2 MPI",
+      "Rapid Elegance 1.6 TDI CR MT",
+      "Octavia Classic 1.9 TDI",
+      "Superb Elegance 1.8 TSI AT",
+      "Laura L&K 2.0 TDI AT",
+      "Yeti 4x2 Elegance"
+    ],
+    "Audi": [
+      "A8",
+      "Q7",
+      "A4 1.8 TFSI Multitronic Premium Plus",
+      "A6 2.0 TDI Premium"
+    ],
+    "Toyota": [
+      "Innova 2.5 V Diesel 8 STR",
+      "Corolla Altis 1.8 GL",
+      "Etios GD",
+      "Fortuner 3.0 4x4 MT",
+      "Qualis"
+    ],
+    "Renault": [
+      "Duster 110PS RxZ Diesel",
+      "Kwid RXT",
+      "Scala RxL",
+      "Lodgy 85PS RxL"
+    ],
+    "Honda": [
+      "City ZX CVT",
+      "Amaze 1.5 SX i DTEC",
+      "Brio V MT",
+      "Mobilio S i DTEC",
+      "Accord",
+      "Jazz VX MT",
+      "WR-V S MT Petrol"
+    ],
+    "Datsun": [
+      "Redi-GO T Option",
+      "Go Plus T"
+    ],
+    "Mitsubishi": [
+      "Pajero Sport 4x2",
+      "Lancer 1.5 GLX"
+    ],
+    "Tata": [
+      "Indigo LS",
+      "Zest XE Revotron 1.2T",
+      "Nano Twist XT",
+      "Manza Club Class Aura",
+      "Tiago Revotron XT",
+      "Nexon 1.2 Revotron XE",
+      "Sumo Gold CX",
+      "Aria Pride 4x4",
+      "Tigor Revotron XZ",
+      "Venture EX",
+      "Vista Quadrajet LX",
+      "Bolt XT"
+    ],
+    "Volkswagen": [
+      "Polo Highline1.2L P",
+      "Vento Highline Plus 1.5 Diesel",
+      "Jetta Comfortline 2.0 TDI",
+      "Passat Highline DSG"
+    ],
+    "Chevrolet": [
+      "Beat LS",
+      "Spark LT",
+      "Cruze LTZ AT",
+      "Enjoy 1.4 LS 8",
+      "Tavera Neo 3 LS 9",
+      "Sail UVA LS",
+      "Sail Hatchback LT ABS"
+    ],
+    "Mini": [
+      "Cooper S Convertible"
+    ],
+    "BMW": [
+      "3 Series 320i",
+      "5 Series 520d",
+      "7 Series 740Li",
+      "X1 sDrive20d"
+    ],
+    "Nissan": [
+      "Micra XL",
+      "Sunny XV",
+      "Terrano XL D Plus",
+      "X-Trail SLX"
+    ],
+    "Fiat": [
+      "Punto Evo 1.3 Emotion",
+      "Linea T-Jet Emotion",
+      "Petra ELX 1.6"
+    ],
+    "Mercedes Benz": [
+      "C Class C220 CDI",
+      "GLA 200 Sport",
+      "A Class A180 CDI",
+      "B Class B180 Sport"
+    ],
+    "Land Rover": [
+      "Freelander 2 SE"
+    ],
+    "Jaguar": [
+      "XE Prestige",
+      "XF 2.2 L Diesel Luxury"
+    ],
+    "Volvo": [
+      "S80 D5"
+    ],
+    "Jeep": [
+      "Wrangler Unlimited"
+    ]
+  };
+
+  // Update models dropdown
+  function updateModels() {
+    const brandSelect = document.getElementById("brand");
+    const modelSelect = document.getElementById("model");
+    const selectedBrand = brandSelect.value;
+
+    modelSelect.innerHTML = '<option value="">--Select Model--</option>';
+
+    if (selectedBrand && carModels[selectedBrand]) {
+      carModels[selectedBrand].forEach(model => {
+        const option = document.createElement("option");
+        option.value = model;
+        option.textContent = model;
+        modelSelect.appendChild(option);
+      });
+    }
+  }
+</script>
+  </div>
+
+<!-- Year -->
+<div class="mb-3 d-flex align-items-center gap-2">
+  <label for="year" class="form-label mb-0">Year:</label>
+  <select class="form-select w-auto" id="year" name="Year" required>
+    <option value="">--Select--</option>
+    <option value="2000">2000</option>
+    <option value="2001">2001</option>
+    <option value="2002">2002</option>
+    <option value="2003">2003</option>
+    <option value="2004">2004</option>
+    <option value="2005">2005</option>
+    <option value="2006">2006</option>
+    <option value="2007">2007</option>
+    <option value="2008">2008</option>
+    <option value="2009">2009</option>
+    <option value="2010">2010</option>
+    <option value="2011">2011</option>
+    <option value="2012">2012</option>
+    <option value="2013">2013</option>
+    <option value="2014">2014</option>
+    <option value="2015">2015</option>
+    <option value="2016">2016</option>
+    <option value="2017">2017</option>
+    <option value="2018">2018</option>
+    <option value="2019">2019</option>
+    <option value="2020">2020</option>
+    <option value="2021">2021</option>
+    <option value="2022">2022</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    <option value="2025">2025</option>
+  </select>
+</div>
+
+
+
+<!-- Kms Driven -->
+<div class="mb-3 d-flex align-items-center gap-2">
+  <label for="kms_driven" class="form-label mb-0">Kms Driven:</label>
+  <input type="number" class="form-control w-auto" id="kms_driven" name="Kms_Driven" min="0" max="500000" required>
+</div>
+
+
+
+<!--   -->
+
+<div class="mb-3">
+  <label for="fuel_type" class="form-label">Fuel Type</label>
+  <select class="form-select" id="fuel_type" name="fuel_type" required>
+    <option value="Petrol">Petrol</option>
+    <option value="Diesel">Diesel</option>
+  </select>
+</div>
+
+<!-- Step 6: City -->
+<div id="cityStep" class="mb-3 hidden">
+  <label for="city">City</label>
+  <select class="form-select" id="city" name="city" required>
+    <option value="">--Select City--</option>
+    <option value="Mumbai">Mumbai</option>
+    <option value="Delhi">Delhi</option>
+    <option value="Bengaluru">Bengaluru</option>
+    <option value="Pune">Pune</option>
+    <option value="Hyderabad">Hyderabad</option>
+    <option value="Chennai">Chennai</option>
+    <option value="Kolkata">Kolkata</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+<!-- Step 7: Owner -->
+<div id="ownerStep" class="mb-3 hidden">
+  <label for="owner">Owner</label>
+  <select class="form-select" id="owner" name="owner" required>
+    <option value="">--Select Owner--</option>
+    <option value="1">1st Owner</option>
+    <option value="2">2nd Owner</option>
+    <option value="3">3rd Owner</option>
+    <option value="4">4th Owner or More</option>
+  </select>
+</div>
+
+...
+<!-- Submit -->
+<button type="submit" id="submitBtn" class="btn btn-light w-100 hidden">Get Car Value</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- JavaScript goes here -->
+<script>
+  function showStep(stepId) {
+    document.getElementById(stepId).classList.remove("hidden");
+  }
+
+  document.getElementById("brand").addEventListener("change", () => showStep("yearStep"));
+  document.getElementById("year").addEventListener("change", () => showStep("kmsStep"));
+  document.getElementById("kms_driven").addEventListener("input", () => showStep("fuelStep"));
+  document.getElementById("fuel_type").addEventListener("change", () => showStep("cityStep"));
+  document.getElementById("city").addEventListener("change", () => showStep("ownerStep"));
+  document.getElementById("owner").addEventListener("change", () => {
+    document.getElementById("submitBtn").classList.remove("hidden");
+  });
+</script>
+
+</body>
+</html>
+
