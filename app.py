@@ -23,8 +23,13 @@ def predict():
         fuel_type = request.form.get("fuel_type")
         city = request.form.get("city")
         owner = request.form.get("owner")
+        transmission = request.form.get("transmission")
+        mileage = float(request.form.get("mileage"))
+        engine = int(request.form.get("engine"))
+        power = float(request.form.get("power"))
+        seats = int(request.form.get("seats"))
 
-        # Prepare DataFrame for ML model
+        # Create DataFrame for prediction
         input_data = pd.DataFrame([{
             "brand": brand,
             "model": model_name,
@@ -32,13 +37,17 @@ def predict():
             "Kms_Driven": kms_driven,
             "fuel_type": fuel_type,
             "city": city,
-            "owner": owner
+            "owner": owner,
+            "transmission": transmission,
+            "Mileage": mileage,
+            "Engine": engine,
+            "Power": power,
+            "Seats": seats
         }])
 
         # Predict price
         predicted_price = model.predict(input_data)[0]
 
-        # Send all data + result to template
         return render_template("result.html",
                                price=round(predicted_price, 2),
                                brand=brand,
@@ -47,7 +56,12 @@ def predict():
                                kms=kms_driven,
                                fuel=fuel_type,
                                city=city,
-                               owner=owner)
+                               owner=owner,
+                               transmission=transmission,
+                               mileage=mileage,
+                               engine=engine,
+                               power=power,
+                               seats=seats)
 
     except Exception as e:
         return f"<h3 style='color:red;'>❌ Error: {e}</h3>"
