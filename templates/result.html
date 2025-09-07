@@ -3,24 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prediction Result</title>
+  <title>Car Price Result</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
+      background-color: #2d2d5a;
+    }
+    .price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ffdd57;
+    }
+    /* Fix for list items visibility */
+    .list-group-item {
+      background-color: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .list-group-item b {
+      color: #ffdd57;
+    }
+    /* Highlighted header */
+    .card-header-custom {
+      background-color: #ffdd57;
+      color: #2d2d5a;
+      font-weight: bold;
+      font-size: 1.8rem;
+      text-align: center;
+      border-radius: 12px 12px 0 0;
+      padding: 15px;
+    }
+    /* Car details heading style */
+    .section-title {
+      background-color: rgba(255, 221, 87, 0.2);
+      color: #ffdd57;
+      font-weight: bold;
+      font-size: 1.3rem;
+      padding: 8px 12px;
+      border-left: 4px solid #ffdd57;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-<body class="bg-light">
-  <div class="container mt-5">
-    <div class="card shadow p-4">
-      <h2 class="text-center text-primary">🚗 Car Price Prediction Result</h2>
-      <hr>
-      <p><strong>Brand:</strong> {{ brand }}</p>
-      <p><strong>Model:</strong> {{ model }}</p>
-      <p><strong>Year:</strong> {{ year }}</p>
-      <p><strong>Kms Driven:</strong> {{ kms }}</p>
-      <p><strong>Fuel Type:</strong> {{ fuel }}</p>
-      <p><strong>City:</strong> {{ city }}</p>
-      <p><strong>Owner:</strong> {{ owner }}</p>
-      <hr>
-      <h3 class="text-success">💰 Predicted Price: ₹ {{ price }}</h3>
-      <a href="/" class="btn btn-primary mt-3">🔙 Go Back</a>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card p-4">
+          
+          <!-- Highlighted header -->
+          <div class="card-header-custom">🚗 Predicted Car Price</div>
+
+          <p class="price text-center mt-4">Estimated Price: ₹ {{ price }}</p>
+
+          <!-- Highlighted Car Details -->
+          <h4 class="section-title">Car Details</h4>
+          <ul class="list-group">
+            <li class="list-group-item"><b>Brand:</b> {{ brand }}</li>
+            <li class="list-group-item"><b>Model:</b> {{ model }}</li>
+            <li class="list-group-item"><b>Year:</b> {{ year }}</li>
+            <li class="list-group-item"><b>Kms Driven:</b> {{ kms }}</li>
+            <li class="list-group-item"><b>Fuel Type:</b> {{ fuel }}</li>
+            <li class="list-group-item"><b>Transmission:</b> {{ transmission }}</li>
+            <li class="list-group-item"><b>City:</b> {{ city }}</li>
+            <li class="list-group-item"><b>Owner:</b> {{ owner }}</li>
+            <li class="list-group-item"><b>Mileage:</b> {{ mileage }} km/l</li>
+            <li class="list-group-item"><b>Engine:</b> {{ engine }} CC</li>
+            <li class="list-group-item"><b>Power:</b> {{ power }} bhp</li>
+            <li class="list-group-item"><b>Seats:</b> {{ seats }}</li>
+          </ul>
+
+          <div class="text-center mt-4">
+            <a href="/" class="btn btn-light">🔙 Back to Home</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
